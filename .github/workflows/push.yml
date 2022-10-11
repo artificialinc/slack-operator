@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - aidan/oom
 
 env:
   DOCKER_FILE_PATH: Dockerfile
