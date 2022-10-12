@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - aidan/oom
 
 env:
   DOCKER_FILE_PATH: Dockerfile
@@ -33,9 +34,9 @@ jobs:
           go-version: ${{ env.GOLANG_VERSION }}
 
       - name: Lint
-        uses: golangci/golangci-lint-action@v2.3.0
+        uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.45.2
+          version: v1.50.0
           only-new-issues: false
           args: --timeout 10m
 
@@ -148,7 +149,7 @@ jobs:
 
       - name: Update Chart CRDs
         run: make generate-crds
-                
+
       # Publish helm chart
       - name: Publish Helm chart
         uses: stefanprodan/helm-gh-pages@master
@@ -169,7 +170,7 @@ jobs:
         run: |
           git config --local user.email "stakater@gmail.com"
           git config --local user.name "stakater-user"
-          git status 
+          git status
           git add .
           git commit -m "[skip-ci] Update artifacts" -a
       - name: Push changes
