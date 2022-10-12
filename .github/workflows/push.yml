@@ -33,11 +33,6 @@ jobs:
         with:
           go-version: ${{ env.GOLANG_VERSION }}
 
-      # - name: Set Swap Space
-      #   uses: pierotofy/set-swap-space@master
-      #   with:
-      #     swap-size-gb: 10
-
       - name: Lint
         uses: golangci/golangci-lint-action@v2.3.0
         with:
