@@ -1,14 +1,14 @@
 package slack
 
 import (
+	"github.com/artificialinc/slack-operator/pkg/slack/mock"
 	"github.com/go-logr/logr"
 	"github.com/slack-go/slack"
-	"github.com/stakater/slack-operator/pkg/slack/mock"
 )
 
 var mockSlackService *SlackService
 
-//NewMockService creates a mock service with SlackTestServer
+// NewMockService creates a mock service with SlackTestServer
 func NewMockService(log logr.Logger) *SlackService {
 
 	if mockSlackService == nil {

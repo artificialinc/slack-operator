@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/stakater/slack-operator/pkg/slack/mock"
+	"github.com/artificialinc/slack-operator/pkg/slack/mock"
 	"github.com/stretchr/testify/assert"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )

@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
+	slackv1alpha1 "github.com/artificialinc/slack-operator/api/v1alpha1"
+	"github.com/artificialinc/slack-operator/pkg/slack/mock"
+	slackMock "github.com/artificialinc/slack-operator/pkg/slack/mock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	slackv1alpha1 "github.com/stakater/slack-operator/api/v1alpha1"
-	"github.com/stakater/slack-operator/pkg/slack/mock"
-	slackMock "github.com/stakater/slack-operator/pkg/slack/mock"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )

@@ -32,9 +32,9 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	slackv1alpha1 "github.com/stakater/slack-operator/api/v1alpha1"
-	controllerUtil "github.com/stakater/slack-operator/controllers/util"
-	"github.com/stakater/slack-operator/pkg/slack"
+	slackv1alpha1 "github.com/artificialinc/slack-operator/api/v1alpha1"
+	controllerUtil "github.com/artificialinc/slack-operator/controllers/util"
+	"github.com/artificialinc/slack-operator/pkg/slack"
 	// +kubebuilder:scaffold:imports
 )
 

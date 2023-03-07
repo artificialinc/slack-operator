@@ -25,11 +25,11 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
+	slackv1alpha1 "github.com/artificialinc/slack-operator/api/v1alpha1"
+	slack "github.com/artificialinc/slack-operator/pkg/slack"
+	pkgutil "github.com/artificialinc/slack-operator/pkg/util"
 	finalizerUtil "github.com/stakater/operator-utils/util/finalizer"
 	reconcilerUtil "github.com/stakater/operator-utils/util/reconciler"
-	slackv1alpha1 "github.com/stakater/slack-operator/api/v1alpha1"
-	slack "github.com/stakater/slack-operator/pkg/slack"
-	pkgutil "github.com/stakater/slack-operator/pkg/util"
 )
 
 var (

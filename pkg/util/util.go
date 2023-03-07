@@ -6,15 +6,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stakater/slack-operator/pkg/config"
+	"github.com/artificialinc/slack-operator/pkg/config"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
 
 	k8sClient "sigs.k8s.io/controller-runtime/pkg/client"
 
+	slackv1alpha1 "github.com/artificialinc/slack-operator/api/v1alpha1"
 	reconcilerUtil "github.com/stakater/operator-utils/util/reconciler"
-	slackv1alpha1 "github.com/stakater/slack-operator/api/v1alpha1"
 )
 
 // MapErrorListToError maps multiple errors into a single error

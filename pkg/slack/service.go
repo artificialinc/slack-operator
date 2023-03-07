@@ -11,7 +11,7 @@ import (
 	"github.com/go-logr/logr"
 	"github.com/slack-go/slack"
 
-	slackv1alpha1 "github.com/stakater/slack-operator/api/v1alpha1"
+	slackv1alpha1 "github.com/artificialinc/slack-operator/api/v1alpha1"
 )
 
 const (

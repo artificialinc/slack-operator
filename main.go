@@ -25,6 +25,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
@@ -33,10 +34,10 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	slackv1alpha1 "github.com/stakater/slack-operator/api/v1alpha1"
-	"github.com/stakater/slack-operator/controllers"
-	config "github.com/stakater/slack-operator/pkg/config"
-	slack "github.com/stakater/slack-operator/pkg/slack"
+	slackv1alpha1 "github.com/artificialinc/slack-operator/api/v1alpha1"
+	"github.com/artificialinc/slack-operator/controllers"
+	config "github.com/artificialinc/slack-operator/pkg/config"
+	slack "github.com/artificialinc/slack-operator/pkg/slack"
 	// +kubebuilder:scaffold:imports
 )
 

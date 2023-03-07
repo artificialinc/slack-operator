@@ -6,9 +6,9 @@ import (
 	"math/rand"
 	"time"
 
+	slackv1alpha1 "github.com/artificialinc/slack-operator/api/v1alpha1"
+	mockdata "github.com/artificialinc/slack-operator/pkg/slack/mock"
 	ginkgo "github.com/onsi/ginkgo"
-	slackv1alpha1 "github.com/stakater/slack-operator/api/v1alpha1"
-	mockdata "github.com/stakater/slack-operator/pkg/slack/mock"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
