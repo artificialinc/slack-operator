@@ -66,9 +66,12 @@ type Service interface {
 
 // SlackService structure
 type SlackService struct {
-	log     logr.Logger
-	api     *slack.Client
-	userApi *slack.Client
+	log logr.Logger
+	api *slack.Client
+	// archiveApi is used to delete channels. This is a separate client because
+	// we want the delete call to not be throttled.
+	archiveApi *slack.Client
+	userApi    *slack.Client
 }
 
 // New creates a new SlackService
@@ -77,6 +80,7 @@ func New(APIToken, UserAPIToken string, logger logr.Logger) *SlackService {
 		api: slack.New(APIToken, slack.OptionHTTPClient(&http.Client{
 			Transport: NewThrottledTransport(limitPeriod, requestCount, http.DefaultTransport),
 		})),
+		archiveApi: slack.New(APIToken),
 		userApi: slack.New(UserAPIToken, slack.OptionHTTPClient(&http.Client{
 			Transport: NewThrottledTransport(limitPeriod, requestCount, http.DefaultTransport),
 		})),
@@ -193,7 +197,7 @@ func (s *SlackService) ArchiveChannel(channelID string) error {
 	log := s.log.WithValues("channelID", channelID)
 
 	log.V(1).Info("Archiving channel")
-	err := s.api.ArchiveConversation(channelID)
+	err := s.archiveApi.ArchiveConversation(channelID)
 
 	if err != nil {
 		log.Error(err, "Error archiving channel")
