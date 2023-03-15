@@ -15,6 +15,10 @@ COPY api/ api/
 COPY controllers/ controllers/
 COPY pkg/ pkg/
 
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.50.0
+RUN golangci-lint run --timeout=2m
+
+
 # Build
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -mod=mod -a -o manager main.go
 

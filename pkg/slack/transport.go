@@ -2,30 +2,84 @@ package slack
 
 import (
 	"net/http"
+	"os"
+	"strconv"
 	"time"
 
-	"golang.org/x/time/rate"
+	"github.com/go-logr/logr"
+	"github.com/hashicorp/go-retryablehttp"
 )
 
-// ThrottledTransport Rate Limited HTTP Client
-type ThrottledTransport struct {
-	roundTripperWrap http.RoundTripper
-	ratelimiter      *rate.Limiter
+var (
+	retryMaxStr = os.Getenv("SLACK_API_RETRY_MAX")
+	waitMaxStr  = os.Getenv("SLACK_API_RETRY_WAIT_MAX")
+	waitMinStr  = os.Getenv("SLACK_API_RETRY_WAIT_MIN")
+	retryMax    int
+	waitMax     time.Duration
+	waitMin     time.Duration
+)
+
+func init() {
+	if retryMaxStr == "" {
+		retryMax = 1000
+	} else {
+		var err error
+		retryMax, err = strconv.Atoi(retryMaxStr)
+		if err != nil {
+			panic(err)
+		}
+	}
+	if waitMaxStr == "" {
+		waitMax = 1 * time.Minute
+	} else {
+		var err error
+		waitMax, err = time.ParseDuration(waitMaxStr)
+		if err != nil {
+			panic(err)
+		}
+	}
+	if waitMinStr == "" {
+		waitMin = 1 * time.Second
+	} else {
+		var err error
+		waitMin, err = time.ParseDuration(waitMinStr)
+		if err != nil {
+			panic(err)
+		}
+	}
 }
 
-// RoundTrip implements the RoundTripper interface.
-func (c *ThrottledTransport) RoundTrip(r *http.Request) (*http.Response, error) {
-	err := c.ratelimiter.Wait(r.Context()) // This is a blocking call. Honors the rate limit
-	if err != nil {
-		return nil, err
-	}
-	return c.roundTripperWrap.RoundTrip(r)
+type TransportLogger struct {
+	logger logr.Logger
+}
+
+func (t TransportLogger) Error(msg string, keysAndValues ...interface{}) {
+	t.logger.Error(nil, msg, keysAndValues...)
+}
+
+func (t TransportLogger) Info(msg string, keysAndValues ...interface{}) {
+	t.logger.Info(msg, keysAndValues...)
+}
+
+func (t TransportLogger) Debug(msg string, keysAndValues ...interface{}) {
+	t.logger.V(1).Info(msg, keysAndValues...)
+}
+
+func (t TransportLogger) Warn(msg string, keysAndValues ...interface{}) {
+	t.logger.V(1).Info(msg, keysAndValues...)
 }
 
 // NewThrottledTransport wraps transportWrap with a rate limitter
-func NewThrottledTransport(limitPeriod time.Duration, requestCount int, transportWrap http.RoundTripper) http.RoundTripper {
-	return &ThrottledTransport{
-		roundTripperWrap: transportWrap,
-		ratelimiter:      rate.NewLimiter(rate.Every(limitPeriod), requestCount),
-	}
+func NewThrottledTransport(logger logr.Logger) *http.Client {
+	retryClient := retryablehttp.NewClient()
+	retryClient.RetryMax = retryMax
+	retryClient.Logger = TransportLogger{logger: logger}
+	retryClient.RetryWaitMax = waitMax
+	retryClient.RetryWaitMin = waitMin
+	// Default retry policy handles 429 and more
+	retryClient.CheckRetry = retryablehttp.DefaultRetryPolicy
+	// Default backoff uses `Retry-After` header if present
+	retryClient.Backoff = retryablehttp.DefaultBackoff
+
+	return retryClient.StandardClient()
 }

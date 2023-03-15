@@ -78,11 +78,11 @@ generate: controller-gen
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
 
 # Build the docker image
-docker-build: test
+docker-build:
 	docker build -t ${IMG} .
 
 # Push the docker image
-docker-push:
+docker-push: docker-build
 	docker push ${IMG}
 
 # find or download controller-gen
@@ -157,7 +157,7 @@ bump-chart-operator:
 	sed -i "s/tag:.*/tag:  v$(VERSION)/" charts/slack-operator/values.yaml
 
 # Bump Chart
-bump-chart: bump-chart-operator 
+bump-chart: bump-chart-operator
 
 generate-crds: controller-gen
 	$(CONTROLLER_GEN) crd paths="./..." output:crd:artifacts:config=charts/slack-operator/crds

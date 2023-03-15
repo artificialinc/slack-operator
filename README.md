@@ -2,6 +2,12 @@
 
 Kubernetes operator for Slack
 
+## ARTIFICIAL HACKS
+
+```bash
+make docker-push IMG=ghcr.io/artificialinc/slack-operator:0.0.32-b13
+```
+
 ## About
 
 Slack operator is used to automate the process of setting up a Slack channel for alertmanager in a k8s native way. By using CRDs it lets you:

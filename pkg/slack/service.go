@@ -3,10 +3,6 @@ package slack
 import (
 	"fmt"
 	"html"
-	"net/http"
-	"os"
-	"strconv"
-	"time"
 
 	"github.com/go-logr/logr"
 	"github.com/slack-go/slack"
@@ -17,34 +13,6 @@ import (
 const (
 	ChannelAlreadyExistsError string = "A channel with the same name already exists"
 )
-
-var (
-	limitPeriodStr  = os.Getenv("SLACK_API_RATE_LIMIT_PERIOD")
-	requestCountStr = os.Getenv("SLACK_API_RATE_LIMIT_COUNT")
-	limitPeriod     time.Duration
-	requestCount    int
-)
-
-func init() {
-	if limitPeriodStr == "" {
-		limitPeriod = 100 * time.Second
-	} else {
-		var err error
-		limitPeriod, err = time.ParseDuration(limitPeriodStr)
-		if err != nil {
-			panic(err)
-		}
-	}
-	if requestCountStr == "" {
-		requestCount = 50
-	} else {
-		var err error
-		requestCount, err = strconv.Atoi(requestCountStr)
-		if err != nil {
-			panic(err)
-		}
-	}
-}
 
 // Service interface
 type Service interface {
@@ -66,25 +34,17 @@ type Service interface {
 
 // SlackService structure
 type SlackService struct {
-	log logr.Logger
-	api *slack.Client
-	// archiveApi is used to delete channels. This is a separate client because
-	// we want the delete call to not be throttled.
-	archiveApi *slack.Client
-	userApi    *slack.Client
+	log     logr.Logger
+	api     *slack.Client
+	userApi *slack.Client
 }
 
 // New creates a new SlackService
 func New(APIToken, UserAPIToken string, logger logr.Logger) *SlackService {
 	return &SlackService{
-		api: slack.New(APIToken, slack.OptionHTTPClient(&http.Client{
-			Transport: NewThrottledTransport(limitPeriod, requestCount, http.DefaultTransport),
-		})),
-		archiveApi: slack.New(APIToken),
-		userApi: slack.New(UserAPIToken, slack.OptionHTTPClient(&http.Client{
-			Transport: NewThrottledTransport(limitPeriod, requestCount, http.DefaultTransport),
-		})),
-		log: logger,
+		api:     slack.New(APIToken, slack.OptionHTTPClient(NewThrottledTransport(logger))),
+		userApi: slack.New(UserAPIToken, slack.OptionHTTPClient(NewThrottledTransport(logger))),
+		log:     logger,
 	}
 }
 
@@ -197,7 +157,7 @@ func (s *SlackService) ArchiveChannel(channelID string) error {
 	log := s.log.WithValues("channelID", channelID)
 
 	log.V(1).Info("Archiving channel")
-	err := s.archiveApi.ArchiveConversation(channelID)
+	err := s.api.ArchiveConversation(channelID)
 
 	if err != nil {
 		log.Error(err, "Error archiving channel")
