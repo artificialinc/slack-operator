@@ -23,6 +23,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
+	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
 // log is for logging in this package.
@@ -53,38 +54,38 @@ func (r *Channel) Default() {
 var _ webhook.Validator = &Channel{}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
-func (r *Channel) ValidateCreate() error {
+func (r *Channel) ValidateCreate() (admission.Warnings, error) {
 	channellog.Info("validate create", "name", r.Name)
 
 	if len(r.Spec.Users) < 1 {
-		return fmt.Errorf("Users can not be empty")
+		return nil, fmt.Errorf("Users can not be empty")
 	}
 
-	return nil
+	return nil, nil
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
-func (r *Channel) ValidateUpdate(old runtime.Object) error {
+func (r *Channel) ValidateUpdate(old runtime.Object) (admission.Warnings, error) {
 	channellog.Info("validate update", "name", r.Name)
 
 	oldChannel, ok := old.(*Channel)
 	if !ok {
-		return fmt.Errorf("Error casting old runtime object to %T from %T", oldChannel, old)
+		return nil, fmt.Errorf("Error casting old runtime object to %T from %T", oldChannel, old)
 	}
 
 	if len(r.Spec.Users) < 1 {
-		return fmt.Errorf("Users can not be empty")
+		return nil, fmt.Errorf("Users can not be empty")
 	}
 
-	return ValidateImmutableFields(r, oldChannel)
+	return nil, ValidateImmutableFields(r, oldChannel)
 }
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type
-func (r *Channel) ValidateDelete() error {
+func (r *Channel) ValidateDelete() (admission.Warnings, error) {
 	channellog.Info("validate delete", "name", r.Name)
 
 	// TODO(user): fill in your validation logic upon object deletion.
-	return nil
+	return nil, nil
 }
 
 func ValidateImmutableFields(newChannel *Channel, oldChannel *Channel) error {
